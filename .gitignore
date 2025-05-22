@@ -83,4 +83,7 @@ cython_debug/
 .DS_Store
 
 # session files
-.session
+*.session
+
+# log files
+*.jsonl
