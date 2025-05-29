@@ -93,9 +93,9 @@ class TelegramTools:
 
             try:
                 if image_url:
-                    await application.bot.send_photo(chat_id=channel_id, photo=image_url, caption=post_content)
+                    await application.bot.send_photo(chat_id=channel_id, photo=image_url, caption=post_content, parse_mode="HTML")
                 else:
-                    await application.bot.send_message(chat_id=channel_id, text=post_content, parse_mode="Markdown")
+                    await application.bot.send_message(chat_id=channel_id, text=post_content, parse_mode="HTML")
             except Exception as e:
                 raise RuntimeError(f"Failed to send post: {e}")
 

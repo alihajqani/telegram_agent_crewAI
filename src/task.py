@@ -22,20 +22,33 @@ class TelegramTask():
             async_execution=True
         )
     
-    def generate_persian_post_task(self, agent, ):
+    def generate_persian_post_task(self, agent):
         return Task(
-            description=dedent(
-                f"""
-                Create engaging posts in Persian about identified art topics
-                and news, including reference links and related hashtags.
-                """
-            ),
-            expected_output=dedent(
-                f"""Persian posts ready for publication,
-                complete with reference links and related hashtags."""
-            ),
+            description=dedent("""
+                Create engaging Persian social media posts from the art topics below.
+                For each topic include:
+                - A summary (translated in Persian)
+                - The original image (if exists)
+                - A clickable link to the source using markdown
+                Your output should be formatted as:
+                ---
+                **{translated_title}**
+                {translated_summary}
+
+                🔗 اطلاعات بیشتر: [{source_title}]({source_url})
+                ![Image]({image_url})
+
+                #هشتگ #مرتبط #با #موضوع
+                ---
+                If no image is available, skip the image markdown.
+                """),
+            expected_output=dedent("""
+                A list of formatted Persian posts with titles, summaries, images (if exist), 
+                and clickable markdown links back to the original sources.
+            """),
             agent=agent
         )
+
     
     def send_post_to_telegram_task(self, agent):
         return Task(
