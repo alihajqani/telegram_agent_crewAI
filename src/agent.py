@@ -1,6 +1,6 @@
 from textwrap import dedent
 from crewai import Agent
-from tools import ExaTools
+from tools import ExaTools, TelegramTools
 
 class TelegramAgent():
     def art_topics_researcher_agent(self):
@@ -39,17 +39,19 @@ class TelegramAgent():
 
         )
     
-    def content_scheduler_agent(self):
+    def telegram_post_sender_agent(self):
         return Agent(
-            role="Content Scheduling Manager",
+            role="Telegram Post Sender",
             goal=dedent(
                 """
-                Schedule and manage the posting of content to the Telegram channel.
+                Send the created Persian posts to the Telegram channel, ensuring they are 
+                formatted correctly and include all necessary links and hashtags.
                 """),
-            tools=ExaTools.tools(),
+            tools=TelegramTools.tools(),
             backstory=dedent(
                 """
-                As a Content Scheduling Manager, you ensure that all posts are timely 
-                and strategically published to maximize audience engagement.
+                As a Telegram Post Sender, you ensure that all posts are delivered 
+                successfully to the channel, maintaining formatting and including all 
+                necessary links and hashtags and if the post had image, send the image with the post.
                 """),
         )

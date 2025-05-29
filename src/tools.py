@@ -1,6 +1,11 @@
 import os
+import asyncio
 from exa_py import Exa
+from telegram import Bot
+from typing import Optional
 from crewai.tools import tool
+from pydantic import BaseModel, Field
+from telegram.ext import ApplicationBuilder
 
 class ExaTools:
     @tool("Search and Get Contents")
@@ -8,7 +13,7 @@ class ExaTools:
         query: str,
         type: str = "auto",
         max_characters: int = 1000,
-        num_results: int = 5,
+        num_results: int = 2,
         start_published_date: str | None = None,
         start_crawl_date: str | None = None
     ) -> list[dict]:
@@ -62,3 +67,49 @@ class ExaTools:
         Return all CrewAI tools.
         """
         return [cls.search_and_get_contents]
+
+class TelegramTools:    
+    @tool("Send Telegram Post")
+    def send_telegram_post(post_content: str, image_url: Optional[str] = None) -> str:
+        """
+        Send a post to a Telegram channel using the python-telegram-bot library.
+        Channel ID and token are read from environment variables.
+
+        Args:
+            post_content: The content of the post to send.
+            image_url: Optional URL of an image to include in the post.
+        Returns:
+            A success message or an error message if sending fails.
+        """
+        async def _inner():
+            bot_token = os.environ.get("TELEGRAM_BOT_TOKEN")
+            channel_id = os.environ.get("TELEGRAM_CHANNEL_ID")
+
+            if not bot_token or not channel_id:
+                raise ValueError("Environment variables TELEGRAM_BOT_TOKEN or TELEGRAM_CHANNEL_ID are missing.")
+
+            application = ApplicationBuilder().token(bot_token).build()
+            await application.initialize()
+
+            try:
+                if image_url:
+                    await application.bot.send_photo(chat_id=channel_id, photo=image_url, caption=post_content)
+                else:
+                    await application.bot.send_message(chat_id=channel_id, text=post_content, parse_mode="Markdown")
+            except Exception as e:
+                raise RuntimeError(f"Failed to send post: {e}")
+
+        try:
+            asyncio.run(_inner())
+            return "✅ Telegram message sent successfully."
+        except Exception as e:
+            return f"❌ Error sending message: {e}"
+
+
+
+    @classmethod
+    def tools(cls) -> list:
+        """
+        Return all Telegram tools.
+        """
+        return [cls.send_telegram_post]

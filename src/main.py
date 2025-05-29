@@ -24,27 +24,27 @@ def main():
     agents = TelegramAgent()
     researcher = agents.art_topics_researcher_agent()
     writer = agents.art_post_creation_agent()
-    scheduler = agents.content_scheduler_agent()
+    post_sender = agents.telegram_post_sender_agent()
 
     tasks = TelegramTask()
     research_task = tasks.search_art_website_task(researcher, art_websites)
     post_creation_task = tasks.generate_persian_post_task(writer)
-    schedule_task = tasks.schedule_telegram_posts_task(scheduler)
+    send_post_task = tasks.send_post_to_telegram_task(post_sender)
 
     post_creation_task.context = [research_task]
-    schedule_task.context = [post_creation_task]
+    send_post_task.context = [research_task, post_creation_task]
 
     crew = Crew(
         name="Telegram Art Content Creation Crew",
         agents=[
             researcher,
             writer,
-            scheduler
+            post_sender
         ],
         tasks=[
             research_task,
-               post_creation_task,
-               schedule_task
+            post_creation_task,
+            send_post_task
         ],
         verbose=True
     )

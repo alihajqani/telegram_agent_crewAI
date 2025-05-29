@@ -37,32 +37,21 @@ class TelegramTask():
             agent=agent
         )
     
-    def generate_persian_post_task(self, agent, ):
+    def send_post_to_telegram_task(self, agent):
         return Task(
             description=dedent(
-                f"""
-                Create engaging posts in Persian about identified art topics
-                and news, including reference links and related hashtags.
+                """
+                Send the created Persian posts to the Telegram channel,                
+                ensuring they are formatted correctly and include all necessary links and hashtags.
+                if the post had image, send the image with the post.
                 """
             ),
             expected_output=dedent(
-                f"""List of Persian posts ready for publication,
-                complete with reference links and related hashtags."""
-            ),
-            agent=agent
-        )
-    
-    def schedule_telegram_posts_task(self, agent):
-        return Task(
-            description=dedent(
-                f"""
-                Schedule and publish the Persian posts to the Telegram channel,
-                ensuring proper timing and engagement strategies.
                 """
+                All Persian posts successfully sent to the Telegram channel,
+                with confirmation of successful delivery."""
             ),
-            expected_output=dedent(
-                f"""All Persian posts successfully scheduled on Telegram,
-                with confirmation of scheduled times."""
-            ),
-            agent=agent
+            agent=agent,
+            inputs={
+                "post_content": "{post_content}"            }
         )
